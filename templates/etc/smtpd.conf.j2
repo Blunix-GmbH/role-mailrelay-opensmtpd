@@ -1,0 +1,44 @@
+# {{ ansible_managed }}
+
+
+# Send a warning if mail remains in queue for more than 5 minutes
+bounce warn-interval {{ mailrelay_opensmtpd_conf_bounce_warn_interval }}
+# Queue encryption (openssl rand -hex 16)
+queue encryption {{ mailrelay_opensmtpd_conf_queue_encryption }}
+# Maximum mail size
+smtp max-message-size {{ mailrelay_opensmtpd_conf_max_message_size }}
+
+
+# Tables
+table relay_secrets file:/etc/smtpd/tables/relay_secrets
+
+
+# Only listen on loopback and obfuscate headers containing the server hostname (also see /etc/mailname)
+listen on lo port 25 hostname {{ mailrelay_opensmtpd_mailname }}
+
+
+# List of authenticated sender addresses and according relay hosts
+{% for mailrelay_opensmtpd_relay in mailrelay_opensmtpd_relays %}
+action "relay_{{ mailrelay_opensmtpd_relay['alias'] }}" \
+    relay \
+    {% if mailrelay_opensmtpd_relay['tls'] | default(True) %}
+    tls \
+    {% endif %}
+    host {{ mailrelay_opensmtpd_relay['protocol'] }}://{{ mailrelay_opensmtpd_relay['alias'] }}@{{ mailrelay_opensmtpd_relay['server'] }}:{{ mailrelay_opensmtpd_relay['port'] }} \
+    auth <relay_secrets> \
+    mail-from {{ mailrelay_opensmtpd_relay['login'] }}
+
+{% endfor %}
+
+
+# Match mail-from and relay
+{% for mailrelay_opensmtpd_relay in mailrelay_opensmtpd_relays %}
+{% for mailrelay_opensmtpd_relay_from in mailrelay_opensmtpd_relay['from'] %}
+match from local mail-from "{{ mailrelay_opensmtpd_relay_from }}" for any action "relay_{{ mailrelay_opensmtpd_relay['alias'] }}"
+{% endfor %}
+
+{% endfor %}
+
+
+# Reject everything else
+match from any reject

@@ -1,0 +1,2 @@
+mailrelay_opensmtpd_conf_max_message_size: 100M
+mailrelay_opensmtpd_conf_bounce_warn_interval: 300s
