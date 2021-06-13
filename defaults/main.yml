@@ -1,2 +1,13 @@
 mailrelay_opensmtpd_conf_max_message_size: 100M
 mailrelay_opensmtpd_conf_bounce_warn_interval: 300s
+
+# List of filters (or config files) to be placed in /etc/smtpd/filters/
+# If you add filters, make sure to edit templates/etc/smtpd.conf.j2
+opensmtpd_mailrelay_filters:
+  - url: "https://git.blunix.com/miscellaneous/opensmtpd-filters/-/raw/master/filter-regex-replace-data/regex-replace-data.py"
+    name: regex-replace-data.py
+
+# Config files for filters, will be placed in /etc/smtpd/filters/ as well
+opensmtpd_mailrelay_filter_configs:
+  - src: templates/etc/smtpd/filters/regex-replace-data.yml.j2
+    name: regex-replace-data.yml

@@ -1,0 +1,7 @@
+debug: False
+
+modify:
+  - regex: "^From: <.*@{{ inventory_hostname }}.{{ internal_private_domain }}>$"
+    replace: "From: <mail@{{ customer_main_domain }}>"
+  - regex: "^X-Mailer:.*"
+    replace: "X-Mailer: Microsoft Outlook"

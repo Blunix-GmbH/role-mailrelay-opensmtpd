@@ -47,3 +47,10 @@
         password: superduperhyperextremelysecret
         from:
           - backuppc
+
+
+
+    # Only for molecule
+    # In playbooks this is in inventory/group_vars/all.yml by default
+    internal_private_domain: exa.io
+    customer_main_domain: example.com

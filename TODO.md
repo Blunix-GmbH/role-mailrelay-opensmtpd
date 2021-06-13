@@ -1,4 +1,6 @@
 # TODO
 
 - redirect mailer daemons
-- filter locally dropped mail (via `mail`)
+- filters:
+  - encrypt outgoing
+  - https://github.com/poolpOrg/filter-prometheus
