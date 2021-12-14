@@ -30,7 +30,7 @@ action "relay_{{ mailrelay_opensmtpd_relay['alias'] }}" \
     {% endif %}
     host {{ mailrelay_opensmtpd_relay['protocol'] }}://{{ mailrelay_opensmtpd_relay['alias'] }}@{{ mailrelay_opensmtpd_relay['server'] }}:{{ mailrelay_opensmtpd_relay['port'] }} \
     auth <relay_secrets> \
-    mail-from {{ mailrelay_opensmtpd_relay['login'] }}
+    mail-from {{ mailrelay_opensmtpd_relay['mail-from'] }}
 
 {% endfor %}
 

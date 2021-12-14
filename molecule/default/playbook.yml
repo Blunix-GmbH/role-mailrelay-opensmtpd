@@ -13,6 +13,7 @@
     # Hostname for this mailrelay - should not be the servers actual hostname
     # Commonly just the domain of the company running the server
     # Will be written into the header of all outgoing emails
+    # Has to be an existing mailserver with MX record
     mailrelay_opensmtpd_mailname: mailout.example.com
 
     # List of relay information
@@ -21,6 +22,8 @@
       - alias: myrelay
         # Relay server DNS name or IP
         server: "mail.example.com"
+        # mail-from email address
+        mail-from: monitoring@example.com
         # Relay server protocol (Documentation: https://man.openbsd.org/smtpd.conf#host)
         protocol: "smtp+tls"
         # Enforce TLS (default: True)
