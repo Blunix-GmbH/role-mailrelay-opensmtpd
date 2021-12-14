@@ -3,6 +3,12 @@
     name:
       - opensmtpd
       - mailutils
+      - python3-pip
+
+- name: install python3 pip package bios
+  pip:
+    name: bios
+    executable: /usr/bin/pip3
 
 - name: create config directories
   file:
