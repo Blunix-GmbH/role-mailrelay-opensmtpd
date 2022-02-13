@@ -27,7 +27,9 @@
         # Relay server protocol (Documentation: https://man.openbsd.org/smtpd.conf#host)
         protocol: "smtp+tls"
         # Enforce TLS (default: True)
-        tls: False
+        tls: True
+        # Do not verify TLS certificates (default: False)
+        tls: True
         # Relay server port
         port: "587"
         # Relay server SMTP login

@@ -25,9 +25,13 @@ listen on socket mask-src tag "socket" filter regex_replace_data
 {% for mailrelay_opensmtpd_relay in mailrelay_opensmtpd_relays %}
 action "relay_{{ mailrelay_opensmtpd_relay['alias'] }}" \
     relay \
-    {% if mailrelay_opensmtpd_relay['tls'] | default(True) %}
+{% if mailrelay_opensmtpd_relay['tls'] | default(True) %}
+{% if mailrelay_opensmtpd_relay['tls_no_verify'] | default(False) %}
+    tls no-verify \
+{% else %}
     tls \
-    {% endif %}
+{% endif %}
+{% endif %}
     host {{ mailrelay_opensmtpd_relay['protocol'] }}://{{ mailrelay_opensmtpd_relay['alias'] }}@{{ mailrelay_opensmtpd_relay['server'] }}:{{ mailrelay_opensmtpd_relay['port'] }} \
     auth <relay_secrets> \
     mail-from {{ mailrelay_opensmtpd_relay['mail-from'] }}
