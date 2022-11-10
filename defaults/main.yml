@@ -1,5 +1,5 @@
 mailrelay_opensmtpd_conf_max_message_size: 100M
-mailrelay_opensmtpd_conf_bounce_warn_interval: 300s
+mailrelay_opensmtpd_smtpd_conf_bounce_warn_interval: 300s
 
 # List of filters (or config files) to be placed in /etc/smtpd/filters/
 # If you add filters, make sure to edit templates/etc/smtpd.conf.j2
@@ -11,3 +11,19 @@ opensmtpd_mailrelay_filters:
 opensmtpd_mailrelay_filter_configs:
   - src: templates/etc/smtpd/filters/regex-replace-data.yml.j2
     name: regex-replace-data.yml
+
+
+
+# Default matrix server
+mailrelay_smtp_to_matrix_server: "https://matrix.org"
+
+# Recipient users / email addresses which will be forwarded to matrix
+# Define this variable in plays / inventory
+mailrelay_smtp_to_matrix_users: []
+# Default values
+mailrelay_smtp_to_matrix_users_default:
+  - monitoring
+  - root
+  - www-data
+# Combining default with custom values
+mailrelay_smtp_to_matrix_users_template: "{{ mailrelay_smtp_to_matrix_users_default + mailrelay_smtp_to_matrix_users }}"

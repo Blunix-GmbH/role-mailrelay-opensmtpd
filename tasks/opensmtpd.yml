@@ -1,0 +1,96 @@
+- name: install opensmtpd related packages
+  apt:
+    name:
+      - opensmtpd
+      - mailutils
+      - python3-pip
+
+- name: install python3 pip packages
+  pip:
+    name: bios
+    executable: /usr/bin/pip3
+  with_items:
+    - bios
+
+- name: create config directories
+  file:
+    state: directory
+    name: "{{ mailrelay_opensmtpd_config_directory_item }}"
+    owner: root
+    group: opensmtpd
+    mode: "0750"
+  with_items:
+    - "/etc/smtpd/filters"
+    - "/etc/smtpd/tables"
+  loop_control:
+    loop_var: mailrelay_opensmtpd_config_directory_item
+
+- name: create config directories for smtp-to-matrix
+  file:
+    state: directory
+    name: "{{ mailrelay_opensmtpd_config_directory_item }}"
+    owner: root
+    group: opensmtpd
+    mode: "0750"
+  with_items:
+    - "/etc/smtpd/filters"
+    - "/etc/smtpd/tables"
+  loop_control:
+    loop_var: mailrelay_opensmtpd_config_directory_item
+
+- name: template /etc/smtpd.conf
+  template:
+    src: templates/etc/smtpd.conf.j2
+    dest: /etc/smtpd.conf
+    owner: root
+    group: opensmtpd
+    mode: "0640"
+  notify: restart opensmtpd
+
+- name: template /etc/smtpd/tables/relay_secrets
+  template:
+    src: templates/etc/smtpd/tables/{{ opensmtpd_mailrelay_table_item }}.j2
+    dest: /etc/smtpd/tables/{{ opensmtpd_mailrelay_table_item }}
+    owner: root
+    group: opensmtpd
+    mode: "0640"
+  notify: restart opensmtpd
+  with_items:
+    - relay_secrets
+    - monitoring_from
+    - monitoring_recipients
+  loop_control:
+    loop_var: opensmtpd_mailrelay_table_item
+
+- name: template filters
+  get_url:
+    url: "{{ opensmtpd_mailrelay_filter['url'] }}"
+    dest: "/etc/smtpd/filters/{{ opensmtpd_mailrelay_filter['name'] }}"
+    owner: root
+    group: opensmtpd
+    mode: "0750"
+  with_items: "{{ opensmtpd_mailrelay_filters }}"
+  loop_control:
+    loop_var: opensmtpd_mailrelay_filter
+  notify: restart opensmtpd
+
+- name: template filter config files
+  template:
+    src: "{{ opensmtpd_mailrelay_filter_config['src'] }}"
+    dest: "/etc/smtpd/filters/{{ opensmtpd_mailrelay_filter_config['name'] }}"
+    owner: root
+    group: opensmtpd
+    mode: "0640"
+  with_items: "{{ opensmtpd_mailrelay_filter_configs }}"
+  loop_control:
+    loop_var: opensmtpd_mailrelay_filter_config
+  notify: restart opensmtpd
+
+- name: template /etc/mailname
+  template:
+    src: "templates/etc/mailname.j2"
+    dest: /etc/mailname
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart opensmtpd

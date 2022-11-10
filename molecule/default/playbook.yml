@@ -16,6 +16,10 @@
     # Has to be an existing mailserver with MX record
     mailrelay_opensmtpd_mailname: mailout.example.com
 
+    # Send warning messages on delay mails
+    # Set to False to disable
+    mailrelay_opensmtpd_smtpd_conf_bounce_warn_interval: 300s
+
     # List of relay information
     mailrelay_opensmtpd_relays:
         # Alias for this relay
@@ -59,3 +63,10 @@
     # In playbooks this is in inventory/group_vars/all.yml by default
     internal_private_domain: exa.io
     customer_main_domain: example.com
+
+
+
+    mailrelay_smtp_to_matrix_username: "matrix-username" # without @ or :matrix.org !
+    mailrelay_smtp_to_matrix_password: "secret-password"
+    mailrelay_smtp_to_matrix_server: "https://matrix.org"
+    mailrelay_smtp_to_matrix_room_id: "!YOUR_MATRIX_ROOM_ID:matrix.org"

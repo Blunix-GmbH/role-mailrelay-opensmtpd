@@ -1,25 +1,43 @@
 # {{ ansible_managed }}
 
 
+
+## BASICS
+{% if mailrelay_opensmtpd_smtpd_conf_bounce_warn_interval != False %}
 # Send a warning if mail remains in queue for more than 5 minutes
-bounce warn-interval {{ mailrelay_opensmtpd_conf_bounce_warn_interval }}
+bounce warn-interval {{ mailrelay_opensmtpd_smtpd_conf_bounce_warn_interval }}
+{% endif %}
 # Queue encryption (openssl rand -hex 16)
 queue encryption {{ mailrelay_opensmtpd_conf_queue_encryption }}
 # Maximum mail size
 smtp max-message-size {{ mailrelay_opensmtpd_conf_max_message_size }}
 
 
-# Tables
-table relay_secrets file:/etc/smtpd/tables/relay_secrets
 
-# Filters
+## TABLES
+table relay_secrets file:/etc/smtpd/tables/relay_secrets
+table monitoring_recipients file:/etc/smtpd/tables/monitoring_recipients
+table monitoring_from file:/etc/smtpd/tables/monitoring_from
+
+
+
+## FILTERS
 filter regex_replace_data proc-exec "/etc/smtpd/filters/regex-replace-data.py"
 
 
+
+## LISTEN
 # Only listen on loopback and local socket and obfuscate headers containing the server hostname (also see /etc/mailname)
 listen on lo port 25 hostname {{ mailrelay_opensmtpd_mailname }} filter regex_replace_data
 listen on socket mask-src tag "socket" filter regex_replace_data
 
+
+
+## ACTION
+# Relay monitoring mails to matrix
+action "relay_monitoring" \
+    relay \
+    host smtp://127.0.0.1:12325
 
 # List of authenticated sender addresses and according relay hosts
 {% for mailrelay_opensmtpd_relay in mailrelay_opensmtpd_relays %}
@@ -39,6 +57,11 @@ action "relay_{{ mailrelay_opensmtpd_relay['alias'] }}" \
 {% endfor %}
 
 
+
+## MATCH
+# Forward monitoring mails to matrix
+match from local mail-from <monitoring_from> for rcpt-to <monitoring_recipients> action "relay_monitoring"
+
 # Match mail-from and relay
 {% for mailrelay_opensmtpd_relay in mailrelay_opensmtpd_relays %}
 {% for mailrelay_opensmtpd_relay_from in mailrelay_opensmtpd_relay['from'] %}
@@ -47,6 +70,5 @@ match from local mail-from "{{ mailrelay_opensmtpd_relay_from }}" for any action
 
 {% endfor %}
 
-
-# Reject everything else
-match from any reject
+# Catchall to monitoring for all other mails
+match from any for any action "relay_monitoring"
