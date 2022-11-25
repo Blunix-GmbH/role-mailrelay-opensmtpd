@@ -27,3 +27,10 @@ mailrelay_smtp_to_matrix_users_default:
   - www-data
 # Combining default with custom values
 mailrelay_smtp_to_matrix_users_template: "{{ mailrelay_smtp_to_matrix_users_default + mailrelay_smtp_to_matrix_users }}"
+
+
+# Defaults from playbook-infrastructure-template-11 - replaced by smtp-to-matrix
+monitoring_email_from: ""
+monitoring_email_sender: ""
+monitoring_email_address: ""
+monitoring_email_recipient: ""
