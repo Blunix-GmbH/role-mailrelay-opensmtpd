@@ -25,6 +25,7 @@ mailrelay_smtp_to_matrix_users_default:
   - monitoring
   - root
   - www-data
+  - prometheus-exporter
 # Combining default with custom values
 mailrelay_smtp_to_matrix_users_template: "{{ mailrelay_smtp_to_matrix_users_default + mailrelay_smtp_to_matrix_users }}"
 
