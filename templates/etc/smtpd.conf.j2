@@ -21,15 +21,10 @@ table monitoring_from file:/etc/smtpd/tables/monitoring_from
 
 
 
-## FILTERS
-filter regex_replace_data proc-exec "/etc/smtpd/filters/regex-replace-data.py"
-
-
-
 ## LISTEN
 # Only listen on loopback and local socket and obfuscate headers containing the server hostname (also see /etc/mailname)
-listen on lo port 25 hostname {{ mailrelay_opensmtpd_mailname }} filter regex_replace_data
-listen on socket mask-src tag "socket" filter regex_replace_data
+listen on lo port 25 hostname {{ mailrelay_opensmtpd_mailname }}
+listen on socket mask-src tag "socket"
 
 
 
