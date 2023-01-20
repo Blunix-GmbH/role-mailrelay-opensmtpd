@@ -22,7 +22,7 @@ table monitoring_from file:/etc/smtpd/tables/monitoring_from
 
 
 ## LISTEN
-# Only listen on loopback and local socket and obfuscate headers containing the server hostname (also see /etc/mailname)
+# Only listen on loopback and local socket
 listen on lo port 25 hostname {{ mailrelay_opensmtpd_mailname }}
 listen on socket mask-src tag "socket"
 
@@ -34,7 +34,11 @@ action "relay_monitoring" \
     relay \
     host smtp://127.0.0.1:12325
 
+{% if mailrelay_opensmtpd_relays != [] %}
 # List of authenticated sender addresses and according relay hosts
+{% else %}
+# No mailrelay_opensmtpd_relays defined
+{% endif %}
 {% for mailrelay_opensmtpd_relay in mailrelay_opensmtpd_relays %}
 action "relay_{{ mailrelay_opensmtpd_relay['alias'] }}" \
     relay \

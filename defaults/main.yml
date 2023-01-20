@@ -33,3 +33,7 @@ monitoring_email_recipient: ""
 
 # Recipient for test mails after role is applied
 mailrelay_testmail_recipient: "p.thurner@blunix.com"
+
+
+# List of relays
+mailrelay_opensmtpd_relays: []
