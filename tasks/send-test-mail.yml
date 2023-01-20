@@ -13,3 +13,15 @@
       echo "Monitoring testmail from $(hostname -f)" | mail -a "From: monitoring@example.com" -s "Monitoring testmail from $(hostname -f)" {{ mailrelay_testmail_recipient }}
   args:
     executable: /bin/bash
+
+- name: wait a bit for mailq to clear
+  pause:
+    seconds: 5
+
+- name: run smtpctl show queue
+  shell: "smtpctl show queue | wc -l"
+  register: mailrelay_opensmtpd_send_test_mail_queue_output
+
+- name: run smtpctl show queue output
+  debug:
+    msg: "{{ mailrelay_opensmtpd_send_test_mail_queue_output.stdout_lines }}"

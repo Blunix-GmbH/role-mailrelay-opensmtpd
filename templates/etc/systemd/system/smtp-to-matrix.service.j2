@@ -13,7 +13,7 @@ ExecStop=/bin/kill -s QUIT $MAINPID
 User=smtp-to-matrix
 Group=smtp-to-matrix
 # wait for dnscrypt-proxy
-ExecStartPre=/bin/sleep 5
+ExecStartPre=/bin/sleep 10
 
 [Install]
 WantedBy=multi-user.target
