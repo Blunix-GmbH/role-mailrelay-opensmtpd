@@ -109,16 +109,18 @@ class CustomHandler:
         message = mailparser.parse_from_bytes(envelope.content)
         mail_from = sub(r"[^a-zA-Z0-9\@\-\. ]", "", str((message.from_))).upper()
         subject = message.subject.upper()
+        date = str(message.date)
         #body = message.body
 
         # Debug components
         log_debug("maintype: " + maintype)
         log_debug("from:     " + str(mail_from))
         log_debug("subject:  " + str(subject))
+        log_debug("date:     " + str(date))
         log_debug("body:     " + str(body))
 
         # Build matrix message
-        matrix_message = "HOST:       " + hostname + "\nFROM:       " + mail_from + "\nSUBJECT: " + subject + "\n\n" + body
+        matrix_message = "HOST:       " + hostname + "\nFROM:      " + mail_from + "\nSUBJECT: " + subject + "\nDATE:        " + date + "\n\n" + body
         log_debug("\n\n==== MESSAGE FOR MATRIX ====\n" + str(matrix_message))
 
         # Send message via matrix
